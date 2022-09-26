@@ -55,9 +55,9 @@ export const createGPUBuffer = (
 
 export const createTransforms = (
     modelMat: mat4, 
-    translation: vec3 = [0,0,0], 
-    rotation: vec3 = [0,0,0], 
-    scaling: vec3 = [1,1,1]
+    translation: vec3 = [0, 0, 0], 
+    rotation: vec3 = [0, 0, 0], 
+    scaling: vec3 = [1, 1, 1]
 ) => {
     const translateMat = mat4.create();
     const rotateXMat = mat4.create();
@@ -125,4 +125,28 @@ export const createGPUBufferUint = (
     buffer.unmap();
 
     return buffer;
+};
+
+let _animationFrame: ReturnType<typeof requestAnimationFrame>;
+export const createAnimation = (
+    draw: () => void,
+    rotation: vec3 = vec3.fromValues(0, 0, 0),
+    rotationRate: number[]
+) => {
+    function step() {
+        rotation[0] += rotationRate[0];
+        rotation[1] += rotationRate[1];
+        rotation[2] += rotationRate[2];
+
+        draw();
+
+        _animationFrame = requestAnimationFrame(step);
+    }
+
+    if (_animationFrame) {
+        cancelAnimationFrame(_animationFrame);
+    }
+    _animationFrame = requestAnimationFrame(step);
+
+    return _animationFrame;
 };
