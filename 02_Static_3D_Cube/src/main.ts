@@ -65,9 +65,12 @@ const create3DObject = async () => {
         }
     });
 
-    const mvpMatrix = mat4.create();
-    const modelMatrix = mat4.create();
     const { viewProjectionMatrix: vpMatrix } = createViewProjection(canvas.width / canvas.height);
+    const modelMatrix = mat4.create();
+    createTransforms(modelMatrix);
+    
+    const mvpMatrix = mat4.create();
+    mat4.multiply(mvpMatrix, vpMatrix, modelMatrix);
 
     const uniformBuffer = device.createBuffer({
         size: 64,
@@ -109,9 +112,6 @@ const create3DObject = async () => {
             depthStoreOp: "store",
         }
     };
-    
-    createTransforms(modelMatrix);
-    mat4.multiply(mvpMatrix, vpMatrix, modelMatrix);
 
     device.queue.writeBuffer(uniformBuffer, 0, mvpMatrix as ArrayBuffer);
 
