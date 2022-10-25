@@ -1,5 +1,10 @@
-export const shaders = () => {
-    const vertexShader = `
+export interface Shaders {
+    vertexShader: string;
+    fragmentShader: string;
+}
+
+export const shaders = {
+    vertexShader: `
         struct Uniforms {
             mvpMatrix : mat4x4<f32>,
         };
@@ -17,14 +22,12 @@ export const shaders = () => {
             output.vColor = color;
             return output;
         }
-    `;
+    `,
 
-    const fragmentShader = `
+    fragmentShader: `
         @fragment
         fn fs_main(@location(0) vColor: vec4<f32>) -> @location(0) vec4<f32> {
             return vColor;
         }
-    `;
-
-    return { vertexShader, fragmentShader };
+    `,
 };

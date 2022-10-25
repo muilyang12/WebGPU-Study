@@ -1,6 +1,6 @@
-import { initGPU, createGPUBuffer, createTransforms, createViewProjection, createAnimation } from './helper';
+import { checkWebGPU, initGPU, createGPUBuffer, createPipeline, createViewProjection, createTransforms, createAnimation } from './helpers';
 import { shaders } from './shaders';
-import { vetexData } from './vetexData';
+import { vertexData } from './vertexData';
 import { mat4, vec3 } from 'gl-matrix';
 
 let rotationRate = [0.01, 0.01, 0.01];
@@ -8,69 +8,22 @@ const create3DObject = async (
     target?: string,
     rate?: number
 ) => {
-    const gpu = await initGPU();
-    if (!gpu) {
-        return;
-    }
 
-    if (!!target && rate !== undefined) {
+    const gpu = checkWebGPU();
+    if (!gpu) return;
+
+    if (target != undefined && rate != undefined) {
         rotationRate[Number(target)] = rate;
     }
 
-    const { device, canvas, format, context } = gpu;
+    const { device, canvas, format, context } = await initGPU();
 
-    const numberOfVertices = vetexData.positions.length / 3;
+    const numberOfVertices = vertexData.positions.length / 3;
 
-    const vertexBuffer = createGPUBuffer(device, vetexData.positions);
-    const colorBuffer = createGPUBuffer(device, vetexData.colors);
- 
-    const { vertexShader, fragmentShader } = shaders();
-    const pipeline = device.createRenderPipeline({
-        layout:'auto',
-        vertex: {
-            module: device.createShaderModule({                    
-                code: vertexShader
-            }),
-            entryPoint: "vs_main",
-            buffers:[
-                {
-                    arrayStride: 12,
-                    attributes: [{
-                        shaderLocation: 0,
-                        format: "float32x3",
-                        offset: 0
-                    }]
-                },
-                {
-                    arrayStride: 12,
-                    attributes: [{
-                        shaderLocation: 1,
-                        format: "float32x3",
-                        offset: 0
-                    }]
-                }
-            ]
-        },
-        fragment: {
-            module: device.createShaderModule({                    
-                code: fragmentShader
-            }),
-            entryPoint: "fs_main",
-            targets: [
-                {
-                    format: format as GPUTextureFormat
-                }
-            ]
-        },
-        primitive:{
-            topology: "triangle-list",
-        },
-        depthStencil:{
-            format: "depth24plus",
-            depthWriteEnabled: true,
-            depthCompare: "less"
-        }
-    });
+    const vertexBuffer = createGPUBuffer(device, vertexData.positions);
+    const colorBuffer = createGPUBuffer(device, vertexData.colors);
+
+    const pipeline = createPipeline(device, shaders, format);
 
     const vp = createViewProjection(canvas.width / canvas.height);
 
@@ -127,7 +80,7 @@ const create3DObject = async (
 
         device.queue.writeBuffer(uniformBuffer, 0, mvpMatrix as ArrayBuffer);
 
-        textureView = gpu.context.getCurrentTexture().createView();
+        textureView = context.getCurrentTexture().createView();
         renderPassDescription.colorAttachments[0].view = textureView;
 
         const commandEncoder = device.createCommandEncoder();
@@ -152,11 +105,11 @@ progresses.map((progress: HTMLProgressElement) => {
         const value = (e.clientX - progress.offsetLeft) / progress.clientWidth * 100;
         progress.value = value;
 
-        const rate = (value - 50) / 50 * 0.1;
+        const rate = (value - 50) / 50 * 0.2;
         create3DObject(progress.dataset.target, rate);
 
         const input = document.querySelector(`input[data-target="${progress.dataset.target}"]`) as HTMLProgressElement;
-        input.value = (value + 100) / 2;
+        input.value = value * 2 - 100;
     });
 });
 
@@ -172,7 +125,7 @@ inputs.map((input: HTMLInputElement) => {
             return;
         }
 
-        const rate = value / 100 * 0.1;
+        const rate = value / 100 * 0.2;
         create3DObject(input.dataset.target, rate);
 
         const progress = document.querySelector(`progress[data-target="${input.dataset.target}"]`) as HTMLProgressElement;

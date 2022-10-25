@@ -1,23 +1,12 @@
 {
     "compilerOptions": {
-      "rootDir": "src",
-      "outDir": "dist",
-      "target": "es6",
-      "lib": [
-        "es2017",
-        "dom"
-      ],
-      "types": [
-        "node",
-        "@webgpu/types"
-      ],
+      "outDir": "./dist/",
+      "noImplicitAny": true,
       "module": "commonjs",
-      "esModuleInterop": true,
-      "strict": true,
-      "sourceMap": true
-    },
-    "exclude": [
-      "node_modules"
-    ]
-}
-  
+      "target": "es6",
+      "jsx": "react",
+      "allowJs": true,
+      "moduleResolution": "node",
+      "types": ["@webgpu/types"]
+    }
+  }

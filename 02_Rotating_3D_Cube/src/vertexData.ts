@@ -1,4 +1,4 @@
-export const vetexData = {
+export const vertexData = {
     positions: new Float32Array([
         // front
         -1, -1,  1,  

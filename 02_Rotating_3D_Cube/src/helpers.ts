@@ -1,31 +1,24 @@
 import { vec3, mat4 } from 'gl-matrix';
+import { Shaders } from './shaders';
 
 export const checkWebGPU = () => {
-    let message = !!navigator.gpu ?
-        'Great, your current browser supports WebGPU.' :
-        'It\'s sad, your current browser doesn\'t support WebGPU.'
-
-
-    return {
-        supportWebGPU: !!navigator.gpu,
-        message
-    };
-};
-
-export const initGPU = async () => {
-    const { supportWebGPU, message } = checkWebGPU();
-
-    if (!supportWebGPU) {
-        let header = document.querySelector('#gpu-check') as HTMLDivElement;
-        header.innerHTML += message;
+    const gpu = navigator.gpu;
+    
+    if (!gpu) {
+        const header = document.querySelector('#gpu-check') as HTMLDivElement;
+        header.innerHTML += 'It\'s sad, your current browser doesn\'t support WebGPU.';
 
         return;
     }
 
+    return gpu;
+};
+
+export const initGPU = async () => {
     const canvas = document.getElementById('canvas-webgpu') as HTMLCanvasElement;
     const context = canvas.getContext('webgpu') as GPUCanvasContext;
-    const adapter = await navigator.gpu?.requestAdapter() as GPUAdapter;
-    const device = await adapter?.requestDevice() as GPUDevice;
+    const adapter = await navigator.gpu.requestAdapter() as GPUAdapter;
+    const device = await adapter.requestDevice() as GPUDevice;
     const format = navigator.gpu.getPreferredCanvasFormat();
 
     context.configure({
@@ -53,31 +46,58 @@ export const createGPUBuffer = (
     return buffer;
 };
 
-export const createTransforms = (
-    modelMat: mat4, 
-    translation: vec3 = [0, 0, 0], 
-    rotation: vec3 = [0, 0, 0], 
-    scaling: vec3 = [1, 1, 1]
+export const createPipeline = (
+    device: GPUDevice, 
+    shaders: Shaders,
+    format: GPUTextureFormat
 ) => {
-    const translateMat = mat4.create();
-    const rotateXMat = mat4.create();
-    const rotateYMat = mat4.create();
-    const rotateZMat = mat4.create();   
-    const scaleMat = mat4.create();
-
-    mat4.fromTranslation(translateMat, translation);
-
-    mat4.fromXRotation(rotateXMat, rotation[0]);
-    mat4.fromYRotation(rotateYMat, rotation[1]);
-    mat4.fromZRotation(rotateZMat, rotation[2]);
-
-    mat4.fromScaling(scaleMat, scaling);
-
-    mat4.multiply(modelMat, rotateXMat, scaleMat);
-    mat4.multiply(modelMat, rotateYMat, modelMat);        
-    mat4.multiply(modelMat, rotateZMat, modelMat);
-    mat4.multiply(modelMat, translateMat, modelMat);
-};
+    return device.createRenderPipeline({
+        layout:'auto',
+        vertex: {
+            module: device.createShaderModule({                    
+                code: shaders.vertexShader
+            }),
+            entryPoint: "vs_main",
+            buffers:[
+                {
+                    arrayStride: 12,
+                    attributes: [{
+                        shaderLocation: 0,
+                        format: "float32x3",
+                        offset: 0
+                    }]
+                },
+                {
+                    arrayStride: 12,
+                    attributes: [{
+                        shaderLocation: 1,
+                        format: "float32x3",
+                        offset: 0
+                    }]
+                }
+            ]
+        },
+        fragment: {
+            module: device.createShaderModule({                    
+                code: shaders.fragmentShader
+            }),
+            entryPoint: "fs_main",
+            targets: [
+                {
+                    format: format as GPUTextureFormat
+                }
+            ]
+        },
+        primitive:{
+            topology: "triangle-list",
+        },
+        depthStencil:{
+            format: "depth24plus",
+            depthWriteEnabled: true,
+            depthCompare: "less"
+        }
+    });
+}
 
 export const createViewProjection = (
     respectRatio = 1.0, 
@@ -107,6 +127,32 @@ export const createViewProjection = (
         viewProjectionMatrix,
         cameraOption
     }
+};
+
+export const createTransforms = (
+    modelMat: mat4, 
+    translation: vec3 = [0, 0, 0], 
+    rotation: vec3 = [0, 0, 0], 
+    scaling: vec3 = [1, 1, 1]
+) => {
+    const translateMat = mat4.create();
+    const rotateXMat = mat4.create();
+    const rotateYMat = mat4.create();
+    const rotateZMat = mat4.create();   
+    const scaleMat = mat4.create();
+
+    mat4.fromTranslation(translateMat, translation);
+
+    mat4.fromXRotation(rotateXMat, rotation[0]);
+    mat4.fromYRotation(rotateYMat, rotation[1]);
+    mat4.fromZRotation(rotateZMat, rotation[2]);
+
+    mat4.fromScaling(scaleMat, scaling);
+
+    mat4.multiply(modelMat, rotateXMat, scaleMat);
+    mat4.multiply(modelMat, rotateYMat, modelMat);        
+    mat4.multiply(modelMat, rotateZMat, modelMat);
+    mat4.multiply(modelMat, translateMat, modelMat);
 };
 
 
