@@ -41,7 +41,7 @@ const create3DObject = async ({
 
     const vp = createViewProjection(canvas.width / canvas.height);
 
-    const { vertexUniformBuffer, fragmentUniformBuffer } = createUniformBuffer(device, vp);
+    const { vertexUniformBuffer, fragmentUniformBuffer, lightUniformBuffer } = createUniformBuffer(device, vp);
 
     const imageName = './earth.png';
     const addressModeU = 'repeat';
@@ -69,10 +69,18 @@ const create3DObject = async ({
             },
             {
                 binding: 2,
-                resource: sampler
+                resource: {
+                    buffer: lightUniformBuffer,
+                    offset: 0,
+                    size: 36
+                }
             },
             {
                 binding: 3,
+                resource: sampler
+            },
+            {
+                binding: 4,
                 resource: texture.createView()
             }
         ]
@@ -101,15 +109,14 @@ const create3DObject = async ({
     };
 
     const normalMatrix = mat4.create();
-    const mvpMatrix = mat4.create();
     const modelMatrix = mat4.create();
-    const vpMatrix = vp.viewProjectionMatrix;
 
     let rotation = vec3.fromValues(0, 0, 0);
 
     const draw = () => {
         createTransforms(modelMatrix, [0, 0, 0], rotation);
-        mat4.multiply(mvpMatrix, vpMatrix, modelMatrix);
+        mat4.invert(normalMatrix, modelMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
 
         device.queue.writeBuffer(vertexUniformBuffer, 64, modelMatrix as ArrayBuffer);
         device.queue.writeBuffer(vertexUniformBuffer, 128, normalMatrix as ArrayBuffer);
@@ -132,43 +139,12 @@ const create3DObject = async ({
     };
     
     createAnimation(draw, rotation, rotationRate);
-}
-
-const progresses = Array.from(document.querySelectorAll('progress')) as HTMLProgressElement[];
-progresses.map((progress: HTMLProgressElement) => {
-    progress.addEventListener('click', (e: MouseEvent) => {
-        const value = (e.clientX - progress.offsetLeft) / progress.clientWidth * 100;
-        progress.value = value;
-
-        const target = progress.dataset.target;
-        const rate = (value - 50) / 50 * 0.2;
-        create3DObject({ target, rate });
-
-        const input = document.querySelector(`input[data-target="${progress.dataset.target}"]`) as HTMLProgressElement;
-        input.value = value * 2 - 100;
-    });
-});
-
-const inputs = Array.from(document.querySelectorAll('.rotate_rate')) as HTMLInputElement[];
-inputs.map((input: HTMLInputElement) => {
-    input.addEventListener('blur', () => {
-        const value = Number(input.value);
-        if (isNaN(value)) return;
-        if (value < -100 || value > 100) return;
-
-        const target = input.dataset.target;
-        const rate = value / 100 * 0.2;
-        create3DObject({ target, rate });
-
-        const progress = document.querySelector(`progress[data-target="${input.dataset.target}"]`) as HTMLProgressElement;
-        progress.value = value / 2 + 50;
-    });
-});
+};
 
 const radiusInput = document.querySelector('.radius') as HTMLInputElement;
 radiusInput.addEventListener('blur', () => {
     const value = Number(radiusInput.value);
-    if (isNaN(value)) return;
+    if (Number.isNaN(value)) return;
     if (value < 0 || value > 10) return;
 
     create3DObject({ radius: value });

@@ -117,7 +117,7 @@ export const createViewProjection = (
     const viewMatrix = mat4.create();
     const projectionMatrix = mat4.create();       
     const viewProjectionMatrix = mat4.create();
-    mat4.perspective(projectionMatrix, 2*Math.PI/5, respectRatio, 0.1, 100.0);
+    mat4.perspective(projectionMatrix, 2 * Math.PI/5, respectRatio, 0.1, 100.0);
 
     mat4.lookAt(viewMatrix, cameraPosition, lookDirection, upDirection);
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
@@ -137,6 +137,14 @@ export const createViewProjection = (
     }
 };
 
+let ambientIntensity = 0.2;
+let diffuseIntensity = 0.8;
+let specularIntensity = 0.4;
+let shininess = 30;
+let specularColor = [1, 1, 1];
+let isPhong = 0;
+let isTwoSideLighting = 1;
+
 type VP = ReturnType<typeof createViewProjection>
 export const createUniformBuffer = (device: GPUDevice, vp: VP) => {
     const eyePosition = new Float32Array(vp.cameraOption.eye);
@@ -152,11 +160,27 @@ export const createUniformBuffer = (device: GPUDevice, vp: VP) => {
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
 
+    const light_params = [
+        ambientIntensity,
+        diffuseIntensity,
+        specularIntensity,
+        shininess,
+        specularColor,
+        isPhong,
+        isTwoSideLighting,
+    ];
+
+    const lightUniformBuffer = device.createBuffer({
+        size: 36,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
     device.queue.writeBuffer(vertexUniformBuffer, 0, vp.viewProjectionMatrix as ArrayBuffer);
     device.queue.writeBuffer(fragmentUniformBuffer, 0, lightPosition);
     device.queue.writeBuffer(fragmentUniformBuffer, 16, eyePosition);
+    device.queue.writeBuffer(lightUniformBuffer, 0, new Float32Array((light_params as any).flat()));
 
-    return { vertexUniformBuffer, fragmentUniformBuffer };
+    return { vertexUniformBuffer, fragmentUniformBuffer, lightUniformBuffer };
 };
 
 export const createTransforms = (
@@ -201,7 +225,7 @@ export const getTexture = async (
         magFilter: 'linear',
         addressModeU: addressModeU as GPUAddressMode,
         addressModeV: addressModeV as GPUAddressMode
-    });
+    });       
 
     const texture = device.createTexture({
         size: [imageBitmap.width, imageBitmap.height, 1],
@@ -218,8 +242,8 @@ export const getTexture = async (
     );
 
     return {
-        sampler,
         texture,
+        sampler
     }
 };
 
