@@ -204,7 +204,7 @@ export const createTransforms = (
     mat4.fromScaling(scaleMat, scaling);
 
     mat4.multiply(modelMat, rotateXMat, scaleMat);
-    mat4.multiply(modelMat, rotateYMat, modelMat);        
+    mat4.multiply(modelMat, rotateYMat, modelMat);
     mat4.multiply(modelMat, rotateZMat, modelMat);
     mat4.multiply(modelMat, translateMat, modelMat);
 };
@@ -225,7 +225,7 @@ export const getTexture = async (
         magFilter: 'linear',
         addressModeU: addressModeU as GPUAddressMode,
         addressModeV: addressModeV as GPUAddressMode
-    });       
+    });
 
     const texture = device.createTexture({
         size: [imageBitmap.width, imageBitmap.height, 1],
