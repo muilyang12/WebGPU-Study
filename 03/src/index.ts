@@ -140,7 +140,7 @@ const inputs = Array.from(document.querySelectorAll('.rotate_rate')) as HTMLInpu
 inputs.map((input: HTMLInputElement) => {
     input.addEventListener('blur', () => {
         const value = Number(input.value);
-        if (isNaN(value)) {
+        if (Number.isNaN(value)) {
             return;
         }
 
