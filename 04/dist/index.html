@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Sizable Sphere</title>
+    <title>Sizable Sphere & Rotating Light</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -18,27 +18,6 @@
             font-weight: bold;
         }
 
-        #inputs {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-            gap: 5px;
-        }
-
-        #inputs > div {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            height: 30px;
-            line-height: 30px;
-        }
-
-        #inputs progress {
-            height: 20px;
-            line-height: 20px;
-            border-radius: 0px;
-        }
-
         #canvas-webgpu {
             border: 2px solid black;
         }
@@ -48,6 +27,16 @@
 <body>
    <div id="gpu-check"></div>
    <div>
+    <div>
+        Axis: 
+        <input type="radio" name="axis" class="light-axis" data-axis="X" id="x" checked>
+        <label for="x">X</label>
+        <input type="radio" name="axis" class="light-axis" data-axis="Y" id="y">
+        <label for="y">Y</label>
+        <input type="radio" name="axis" class="light-axis" data-axis="Z" id="z">
+        <label for="z">Z</label>
+    </div>
+    <br />
     <div>
         Radius: 
         <input type="text" class="radius" data-target="radius" value="2" />

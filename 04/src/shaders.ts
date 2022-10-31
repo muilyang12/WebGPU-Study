@@ -42,8 +42,8 @@ export const shaders = {
 
     fragmentShader: `
         struct Uniforms {
-            lightPosition : vec4<f32>, 
-            eyePosition : vec4<f32>, 
+            lightPosition : vec4<f32>,
+            eyePosition : vec4<f32>,
         };
         struct LightUniforms {
             ambientIntensity: f32,

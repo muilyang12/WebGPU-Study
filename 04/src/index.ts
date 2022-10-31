@@ -1,27 +1,19 @@
-import { checkWebGPU, initGPU, createGPUBuffer, createPipeline, createViewProjection, createUniformBuffer, getTexture, createTransforms, createAnimation } from './helpers';
+import { checkWebGPU, initGPU, createGPUBuffer, createPipeline, createViewProjection, createUniformBuffer, getTexture, RotateAxis, rotateLight, createAnimation } from './helpers';
 import { shaders } from './shaders';
 import { getSphereData } from './vertexData';
 import { mat4, vec3 } from 'gl-matrix';
 
-let rotationRate = [0.01, 0.01, 0.01];
-
 interface CreateObjectProps {
     radius?: number;
-    target?: string;
-    rate?: number;
+    axis?: RotateAxis;
 }
 const create3DObject = async ({
     radius = 2,
-    target,
-    rate,
+    axis = RotateAxis.X,
 }: CreateObjectProps) => {
 
     const gpu = checkWebGPU();
     if (!gpu) return;
-
-    if (target != undefined && rate != undefined) {
-        rotationRate[Number(target)] = rate;
-    }
 
     const { device, canvas, format, context } = await initGPU();
 
@@ -111,12 +103,14 @@ const create3DObject = async ({
     const normalMatrix = mat4.create();
     const modelMatrix = mat4.create();
 
-    let rotation = vec3.fromValues(0, 0, 0);
+    const light = vec3.clone(vp.cameraOption.eye);
 
     const draw = () => {
-        createTransforms(modelMatrix, [0, 0, 0], rotation);
         mat4.invert(normalMatrix, modelMatrix);
         mat4.transpose(normalMatrix, normalMatrix);
+
+        const lightPosition = rotateLight[axis](light, light, [0, 0, 0], 0.02);
+        device.queue.writeBuffer(fragmentUniformBuffer, 0, lightPosition);
 
         device.queue.writeBuffer(vertexUniformBuffer, 64, modelMatrix as ArrayBuffer);
         device.queue.writeBuffer(vertexUniformBuffer, 128, normalMatrix as ArrayBuffer);
@@ -138,8 +132,17 @@ const create3DObject = async ({
         device.queue.submit([commandEncoder.finish()]);
     };
     
-    createAnimation(draw, rotation, rotationRate);
+    createAnimation(draw);
 };
+
+const lightAxises = Array.from(document.querySelectorAll('.light-axis')) as HTMLInputElement[];
+lightAxises.map((lightAxis: HTMLInputElement) => {
+    lightAxis.addEventListener('change', () => {
+        if (!lightAxis.value) return;
+
+        create3DObject({ axis: lightAxis.dataset.axis as RotateAxis });
+    });
+});
 
 const radiusInput = document.querySelector('.radius') as HTMLInputElement;
 radiusInput.addEventListener('blur', () => {
