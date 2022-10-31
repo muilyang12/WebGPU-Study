@@ -77,7 +77,6 @@ export const shaders = {
             let V: vec3<f32> = normalize(uniforms.eyePosition.xyz - input.vPosition.xyz);
             let H: vec3<f32> = normalize(L + V);
 
-            let twoSide: i32 = i32(lightUniforms.isTwoSideLighting);
             var diffuse: f32 = lightUniforms.diffuseIntensity * max(dot(N, L), 0.0);
 
             var specular: f32;
