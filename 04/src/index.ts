@@ -109,7 +109,7 @@ const create3DObject = async ({
         mat4.invert(normalMatrix, modelMatrix);
         mat4.transpose(normalMatrix, normalMatrix);
 
-        const lightPosition = rotateLight[axis](light, light, [0, 0, 0], 0.02);
+        const lightPosition = rotateLight[axis](light, light, [0, 0, 0], 0.03);
         device.queue.writeBuffer(fragmentUniformBuffer, 0, lightPosition);
 
         device.queue.writeBuffer(vertexUniformBuffer, 64, modelMatrix as ArrayBuffer);

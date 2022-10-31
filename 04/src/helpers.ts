@@ -144,13 +144,13 @@ export const createViewProjection = (
     }
 };
 
-let ambientIntensity = 0.2;
+let ambientIntensity = 0.1;
 let diffuseIntensity = 0.8;
 let specularIntensity = 0.4;
 let shininess = 30;
 let specularColor = [1, 1, 1];
 let isPhong = 0;
-let isTwoSideLighting = 1;
+let isTwoSideLighting = 0;
 
 type VP = ReturnType < typeof createViewProjection >
     export const createUniformBuffer = (device: GPUDevice, vp: VP) => {
