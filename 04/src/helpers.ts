@@ -144,7 +144,7 @@ export const createViewProjection = (
     }
 };
 
-let ambientIntensity = 0.1;
+let ambientIntensity = 0.15;
 let diffuseIntensity = 0.8;
 let specularIntensity = 0.4;
 let shininess = 30;
