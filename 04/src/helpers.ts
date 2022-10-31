@@ -258,11 +258,9 @@ export const getTexture = async (
             GPUTextureUsage.RENDER_ATTACHMENT
     });
 
-    device.queue.copyExternalImageToTexture({
-            source: imageBitmap
-        }, {
-            texture: texture
-        },
+    device.queue.copyExternalImageToTexture(
+        { source: imageBitmap }, 
+        { texture: texture },
         [imageBitmap.width, imageBitmap.height]
     );
 
