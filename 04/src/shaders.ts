@@ -80,8 +80,8 @@ export const shaders = {
             var diffuse: f32 = lightUniforms.diffuseIntensity * max(dot(N, L), 0.0);
 
             var specular: f32;
-            var isp: i32 = i32(lightUniforms.isPhong);
-            if (isp == 1){
+            var isPhong: i32 = i32(lightUniforms.isPhong);
+            if (isPhong == 1){
                 specular = lightUniforms.specularIntensity * pow(max(dot(V, reflect(-L, N)), 0.0), lightUniforms.shininess);
             } else {
                 specular = lightUniforms.specularIntensity * pow(max(dot(N, H), 0.0), lightUniforms.shininess);
