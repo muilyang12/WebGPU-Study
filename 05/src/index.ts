@@ -52,10 +52,7 @@ const create3DObject = async (target?: string, rate?: number) => {
     ],
   });
 
-  const mvpMatrix = mat4.create();
-  const modelMatrix = mat4.create();
   const vpMatrix = vp.viewProjectionMatrix;
-
   const modelMatrices = new Array(numInstances);
   const mvpMatrices = new Float32Array(4 * 4 * numInstances);
 
