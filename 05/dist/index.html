@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Rotating Cube</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      #gpu-check {
+        height: 100px;
+        line-height: 100px;
+
+        text-align: center;
+        font-size: 35px;
+        font-weight: bold;
+      }
+
+      #inputs {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        gap: 5px;
+      }
+
+      #inputs > div {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        height: 30px;
+        line-height: 30px;
+      }
+
+      #inputs progress {
+        height: 20px;
+        line-height: 20px;
+        border-radius: 0px;
+      }
+
+      #canvas-webgpu {
+        border: 2px solid black;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="gpu-check"></div>
+    <div id="inputs">
+      <div>
+        Rotate rate X:
+        <progress data-target="0" max="100" value="75"></progress>
+        <input type="text" class="rotate_rate" data-target="0" value="50" />
+      </div>
+      <div>
+        Rotate rate Y:
+        <progress data-target="1" max="100" value="75"></progress>
+        <input type="text" class="rotate_rate" data-target="1" value="50" />
+      </div>
+      <div>
+        Rotate rate Z:
+        <progress data-target="2" max="100" value="75"></progress>
+        <input type="text" class="rotate_rate" data-target="2" value="50" />
+      </div>
+      <br />
+    </div>
+    <canvas id="canvas-webgpu" width="500" height="500"></canvas>
+    <script src="index.js"></script>
+  </body>
+</html>
