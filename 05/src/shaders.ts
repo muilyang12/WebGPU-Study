@@ -3,10 +3,10 @@ export interface Shaders {
   fragmentShader: string;
 }
 
-export const shaders = {
+export const shaders = (numInstances: number) => ({
   vertexShader: `
         struct Uniforms {
-            mvpMatrix : array<mat4x4<f32>,25>,
+            mvpMatrix : array<mat4x4<f32>,${numInstances}>,
         };
         @binding(0) @group(0) var<uniform> uniforms : Uniforms;
 
@@ -30,4 +30,4 @@ export const shaders = {
             return vColor;
         }
     `,
-};
+});

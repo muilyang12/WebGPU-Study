@@ -27,13 +27,14 @@ const create3DObject = async (target?: string, rate?: number) => {
   const vertexBuffer = createGPUBuffer(device, vertexData.positions);
   const colorBuffer = createGPUBuffer(device, vertexData.colors);
 
-  const pipeline = createPipeline(device, shaders, format);
-
-  const vp = createViewProjection(canvas.width / canvas.height);
-
   const nx = 5;
   const ny = 5;
-  const numInstances = nx * ny;
+  const nz = 5;
+  const numInstances = nx * ny * nz;
+
+  const pipeline = createPipeline(device, shaders(numInstances), format);
+
+  const vp = createViewProjection(canvas.width / canvas.height);
 
   const uniformBuffer = device.createBuffer({
     size: 4 * 4 * 4 * numInstances,
@@ -59,14 +60,16 @@ const create3DObject = async (target?: string, rate?: number) => {
   let index = 0;
   for (let i = 0; i < nx; i++) {
     for (let j = 0; j < ny; j++) {
-      modelMatrices[index] = mat4.create();
-      mat4.translate(
-        modelMatrices[index],
-        modelMatrices[index],
-        vec3.fromValues(2 * (i - nx / 2) + 1, 2 * (j - ny / 2) + 1, 0)
-      );
+      for (let k = 0; k < nz; k++) {
+        modelMatrices[index] = mat4.create();
+        mat4.translate(
+          modelMatrices[index],
+          modelMatrices[index],
+          vec3.fromValues(2 * (i - nx / 2) + 1, 2 * (j - ny / 2) + 1, -2 * k)
+        );
 
-      index += 1;
+        index += 1;
+      }
     }
   }
 
@@ -101,27 +104,29 @@ const create3DObject = async (target?: string, rate?: number) => {
     let index = 0;
     for (let i = 0; i < nx; i++) {
       for (let j = 0; j < ny; j++) {
-        mat4.translate(
-          modelMatrices[index],
-          modelMatrices[index],
-          vec3.fromValues(
-            0,
-            0,
-            0.01 * Math.sign(Math.sin((rad / 100) * (i / 10 + 1) * Math.PI))
-          )
-        );
-        // mat4.rotate(
-        //   modelMatrices[index],
-        //   modelMatrices[index],
-        //   0.03 * (0.05 * i) + 0.01,
-        //   vec3.fromValues(0, 1, 0)
-        // );
+        for (let k = 0; k < nz; k++) {
+          mat4.translate(
+            modelMatrices[index],
+            modelMatrices[index],
+            vec3.fromValues(
+              0,
+              0,
+              0.02 * Math.sign(Math.sin((rad / 100) * (i / 10 + 1) * Math.PI))
+            )
+          );
+          // mat4.rotate(
+          //   modelMatrices[index],
+          //   modelMatrices[index],
+          //   0.03 * (0.05 * i) + 0.01,
+          //   vec3.fromValues(0, 1, 0)
+          // );
 
-        mat4.multiply(tempMatrix, vpMatrix, modelMatrices[index]);
+          mat4.multiply(tempMatrix, vpMatrix, modelMatrices[index]);
 
-        mvpMatrices.set(tempMatrix, 16 * index);
+          mvpMatrices.set(tempMatrix, 16 * index);
 
-        index += 1;
+          index += 1;
+        }
       }
 
       rad += 0.5;

@@ -107,8 +107,8 @@ export const createPipeline = (
 
 export const createViewProjection = (
   respectRatio = 1.0,
-  cameraPosition: vec3 = [0, 0, 8],
-  lookDirection: vec3 = [0, 0, 0],
+  cameraPosition: vec3 = [0, 7, 7],
+  lookDirection: vec3 = [0, 2, 0],
   upDirection: vec3 = [0, 1, 0]
 ) => {
   const viewMatrix = mat4.create();
