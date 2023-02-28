@@ -1,10 +1,10 @@
 export interface Shaders {
-    vertexShader: string;
-    fragmentShader: string;
+  vertexShader: string;
+  fragmentShader: string;
 }
 
 export const shaders = {
-    vertexShader: `
+  vertexShader: `
         struct Uniforms {
             viewProjectionMatrix : mat4x4<f32>,
             modelMatrix : mat4x4<f32>,
@@ -40,7 +40,7 @@ export const shaders = {
         }
     `,
 
-    fragmentShader: `
+  fragmentShader: `
         struct Uniforms {
             lightPosition : vec4<f32>,
             eyePosition : vec4<f32>,
@@ -93,5 +93,5 @@ export const shaders = {
             let finalColor: vec3<f32> = textureColor * (ambient + diffuse) + specularColor * specular;
             return vec4<f32>(finalColor, 1.0);
         }
-    `
-}
+    `,
+};

@@ -1,107 +1,111 @@
-import { vec3 } from 'gl-matrix';
+import { vec3 } from "gl-matrix";
 
 interface SphereDataProps {
-    radius: number;
-    u: number;
-    v: number;
-    ul?: number;
-    vl?: number;
+  radius: number;
+  u: number;
+  v: number;
+  ul?: number;
+  vl?: number;
 }
 export const getSphereData = ({
-    radius = 2,
-    u = 20,
-    v = 15,
-    ul = 1, 
-    vl = 1
+  radius = 2,
+  u = 20,
+  v = 15,
+  ul = 1,
+  vl = 1,
 }: SphereDataProps) => {
-    if (u < 2 || v < 2) return;
+  if (u < 2 || v < 2) return;
 
-    let points: vec3[][] = [];
+  let points: vec3[][] = [];
 
-    let point: vec3;
-    for (let i = 0; i < u; i++) {
-        let tempPoints: vec3[] = [];
+  let point: vec3;
+  for (let i = 0; i < u; i++) {
+    let tempPoints: vec3[] = [];
 
-        for (let j = 0; j < v; j++) {
-            point = getSphereCoordinate({ radius, theta: i * 180 / (u - 1), phi: j * 360 / (v - 1) });
-            tempPoints = [...tempPoints, point]
-        }
-
-        points = [...points, tempPoints]
+    for (let j = 0; j < v; j++) {
+      point = getSphereCoordinate({
+        radius,
+        theta: (i * 180) / (u - 1),
+        phi: (j * 360) / (v - 1),
+      });
+      tempPoints = [...tempPoints, point];
     }
 
-    let positions: number[] = [];
-    let normals: number[] = [];
-    let uvs: number[] = [];
+    points = [...points, tempPoints];
+  }
 
-    for (let i = 0; i < u - 1; i++) {
-        for (let j = 0; j < v - 1; j++) {
-            let p0: vec3 = points[i][j];
-            let p1: vec3 = points[i + 1][j];
-            let p2: vec3 = points[i + 1][j + 1];
-            let p3: vec3 = points[i][j + 1];
+  let positions: number[] = [];
+  let normals: number[] = [];
+  let uvs: number[] = [];
 
-            positions = [
-                ...positions, 
-                ...p0, ...p1, ...p3, 
-                ...p1, ...p2, ...p3,
-            ];
+  for (let i = 0; i < u - 1; i++) {
+    for (let j = 0; j < v - 1; j++) {
+      let p0: vec3 = points[i][j];
+      let p1: vec3 = points[i + 1][j];
+      let p2: vec3 = points[i + 1][j + 1];
+      let p3: vec3 = points[i][j + 1];
 
-            normals = [
-                ...normals,
+      positions = [...positions, ...p0, ...p1, ...p3, ...p1, ...p2, ...p3];
 
-                p0[0] / radius, p0[1] / radius, p0[2] / radius,
-                p1[0] / radius, p1[1] / radius, p1[2] / radius, 
-                p3[0] / radius, p3[1] / radius, p3[2] / radius, 
+      normals = [
+        ...normals,
 
-                p1[0] / radius, p1[1] / radius, p1[2] / radius,  
-                p2[0] / radius, p2[1] / radius, p2[2] / radius, 
-                p3[0] / radius, p3[1] / radius, p3[2] / radius,
-            ];
+        p0[0] / radius,
+        p0[1] / radius,
+        p0[2] / radius,
+        p1[0] / radius,
+        p1[1] / radius,
+        p1[2] / radius,
+        p3[0] / radius,
+        p3[1] / radius,
+        p3[2] / radius,
 
-            let u0 = ul * (0.5 + Math.atan2(p0[0] / radius,p0[2] / radius) / Math.PI / 2);
-            let u1 = ul * (0.5 + Math.atan2(p1[0] / radius,p1[2] / radius) / Math.PI / 2);
-            let u2 = ul * (0.5 + Math.atan2(p2[0] / radius,p2[2] / radius) / Math.PI / 2);
-            let u3 = ul * (0.5 + Math.atan2(p3[0] / radius,p3[2] / radius) / Math.PI / 2);
-            let v0 = vl * (0.5 + Math.asin(p0[1] / radius) / Math.PI);
-            let v1 = vl * (0.5 + Math.asin(p1[1] / radius) / Math.PI);
-            let v2 = vl * (0.5 + Math.asin(p2[1] / radius) / Math.PI);
-            let v3 = vl * (0.5 + Math.asin(p3[1] / radius) / Math.PI);
+        p1[0] / radius,
+        p1[1] / radius,
+        p1[2] / radius,
+        p2[0] / radius,
+        p2[1] / radius,
+        p2[2] / radius,
+        p3[0] / radius,
+        p3[1] / radius,
+        p3[2] / radius,
+      ];
 
-            uvs = [
-                ...uvs,
+      let u0 =
+        ul * (0.5 + Math.atan2(p0[0] / radius, p0[2] / radius) / Math.PI / 2);
+      let u1 =
+        ul * (0.5 + Math.atan2(p1[0] / radius, p1[2] / radius) / Math.PI / 2);
+      let u2 =
+        ul * (0.5 + Math.atan2(p2[0] / radius, p2[2] / radius) / Math.PI / 2);
+      let u3 =
+        ul * (0.5 + Math.atan2(p3[0] / radius, p3[2] / radius) / Math.PI / 2);
+      let v0 = vl * (0.5 + Math.asin(p0[1] / radius) / Math.PI);
+      let v1 = vl * (0.5 + Math.asin(p1[1] / radius) / Math.PI);
+      let v2 = vl * (0.5 + Math.asin(p2[1] / radius) / Math.PI);
+      let v3 = vl * (0.5 + Math.asin(p3[1] / radius) / Math.PI);
 
-                u0, v0, u1, v1, u3, v3,
-
-                u1, v1, u2, v2, u3, v3
-            ];
-        }
+      uvs = [...uvs, u0, v0, u1, v1, u3, v3, u1, v1, u2, v2, u3, v3];
     }
+  }
 
-    return {
-        positions: new Float32Array(positions),
-        normals: new Float32Array(normals),
-        uvs: new Float32Array(uvs),
-    }
+  return {
+    positions: new Float32Array(positions),
+    normals: new Float32Array(normals),
+    uvs: new Float32Array(uvs),
+  };
 };
 
 interface SphereCoordinateProps {
-    radius: number;
-    theta: number
-    phi: number;
+  radius: number;
+  theta: number;
+  phi: number;
 }
-const getSphereCoordinate = ({
-    radius, theta, phi
-}: SphereCoordinateProps) => {
-    let snt = Math.sin(theta * Math.PI / 180);
-    let cnt = Math.cos(theta * Math.PI / 180);
+const getSphereCoordinate = ({ radius, theta, phi }: SphereCoordinateProps) => {
+  let snt = Math.sin((theta * Math.PI) / 180);
+  let cnt = Math.cos((theta * Math.PI) / 180);
 
-    let snp = Math.sin(phi * Math.PI / 180);
-    let cnp = Math.cos(phi * Math.PI / 180);
+  let snp = Math.sin((phi * Math.PI) / 180);
+  let cnp = Math.cos((phi * Math.PI) / 180);
 
-    return vec3.fromValues(
-        radius * snt * cnp,
-        radius * cnt,
-        -radius * snt * snp
-    );
+  return vec3.fromValues(radius * snt * cnp, radius * cnt, -radius * snt * snp);
 };

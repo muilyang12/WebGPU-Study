@@ -1,15 +1,15 @@
 interface Point {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 }
 
 export const Shaders = (points: Point[]) => {
-    let pointsStr = ''
-    points.forEach((point) => {
-       pointsStr += `vec2<f32>(${point.x}, ${point.y}),\n`; 
-    });
+  let pointsStr = "";
+  points.forEach((point) => {
+    pointsStr += `vec2<f32>(${point.x}, ${point.y}),\n`;
+  });
 
-    const vertex = `
+  const vertex = `
         @vertex
         fn main(@builtin(vertex_index) VertexIndex: u32) -> @builtin(position) vec4<f32> {
             var pos = array<vec2<f32>, ${points.length}>(             
@@ -19,12 +19,12 @@ export const Shaders = (points: Point[]) => {
         }
     `;
 
-    const fragment = `
+  const fragment = `
         @fragment
         fn main() -> @location(0) vec4<f32> {
             return vec4<f32>(0.0, 0.0, 0.0, 1.0);
         }
     `;
 
-    return { vertex, fragment };
-}
+  return { vertex, fragment };
+};

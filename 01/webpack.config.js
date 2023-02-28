@@ -2,29 +2,28 @@ const path = require("path");
 const bundleOutputDir = "./dist";
 
 module.exports = {
-    entry: {
-        main: "./src/main"  
+  entry: "./src/index.ts",
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"],
+  },
+  output: {
+    filename: "index.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "src"),
     },
-    output: {
-        filename: "[name].bundle.js",
-        path: path.join(__dirname, bundleOutputDir),
-        publicPath: 'public/dist/'
-    },
-    devtool: "source-map",
-    resolve: {
-        extensions: ['.js', '.ts']
-    },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: ['/node_modules/']
-            },            
-            { test: /\.tsx?$/, loader: "ts-loader" },        
-            {
-                test: /\.css$/i,
-                use: ["style-loader", "css-loader"]
-            }
-        ]
-    }
+    compress: true,
+    port: 3333,
+  },
 };
