@@ -1,7 +1,9 @@
 # WebGPU Study
 
 - 이 레포지토리는 WebGPU로 canvas 태그에 몇몇 예제들을 렌더링하며 학습한 내용을 정리하는 레포지토리입니다.
+- This repository is a collection of examples that render certain content on the canvas element using WebGPU.
 - 최신 크롬 (113 버전부터) 은 WebGPU를 지원하기에 아래 Link 실행이 가능합니다. (구 버전의 경우 업데이트가 필요합니다.)
+- The latest version of Chrome (starting from version 113) supports WebGPU, so the execution of the following link is possible. (For older versions, an update is required.)
 
 <br />
 
@@ -9,7 +11,7 @@
 
 - WebGPU, Webpack, Webpack DevServer, gl-matrix (Matrix Calcualtion)
   - 3D 그래픽스 개념을 간단하게 학습하며 아래의 예시들을 만들었습니다.
-  - I studied 3D graphics briefly and created the following results.
+  - I have created the following examples while learning the concepts of 3D graphics.
 
 <br />
 
