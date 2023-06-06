@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Sizable Earth & Rotating Light</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      #gpu-check {
+        height: 100px;
+        line-height: 100px;
+
+        text-align: center;
+        font-size: 35px;
+        font-weight: bold;
+      }
+
+      #canvas-webgpu {
+        border: 2px solid black;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="gpu-check"></div>
+    <div>
+      <div>
+        Axis:
+        <input type="radio" name="axis" class="light-axis" data-axis="X" id="x" checked />
+        <label for="x">X</label>
+        <input type="radio" name="axis" class="light-axis" data-axis="Y" id="y" />
+        <label for="y">Y</label>
+        <input type="radio" name="axis" class="light-axis" data-axis="Z" id="z" />
+        <label for="z">Z</label>
+      </div>
+      <br />
+      <div>
+        Radius:
+        <input type="text" class="radius" data-target="radius" value="2" />
+      </div>
+    </div>
+    <br />
+    <canvas id="canvas-webgpu" width="500" height="500"></canvas>
+    <script src="index.js"></script>
+  </body>
+</html>
