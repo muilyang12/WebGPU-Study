@@ -1,7 +1,8 @@
 # WebGPU Study
 
-- This repository is a collection of examples that render certain content on the canvas element using WebGPU.
-- The latest version of Chrome (starting from version 113) supports WebGPU, so the execution of the following link is possible. (For older versions, an update is required.)
+## Overview
+
+This repository is a collection of examples created using Canvas and **WebGPU**, a cutting-edge API for GPU programming in web environments. The projects cover foundational concepts such as 3D transformations, texture mapping, lighting, and instanced rendering.
 
 ## Technologies Used
 
