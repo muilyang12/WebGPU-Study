@@ -7,7 +7,7 @@
 
 - TypeScript
 - WebGPU
-- Webpack for bundling, transpiling TypeScript to JavaScript.
+- Webpack for bundling and transpiling TypeScript to JavaScript.
 - gl-matrix for matrix calcualtion
 - HTML/CSS
 
